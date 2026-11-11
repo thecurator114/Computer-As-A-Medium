@@ -1,34 +1,49 @@
 using UnityEngine;
-using TMPro;
-using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerMana : MonoBehaviour
 {
-    public int mana =100
-    public TMP_Text manaText;
+    [Header("Mana Settings")]
+    public float maxMana = 100f;
+    public float currentMana;
+    public float manaRegenRate = 5f;
+
+    [Header("UI Reference")]
+    public Slider manaSlider;
+
     void Start()
     {
-        manaText.text = "Mana: " + mana;
+        currentMana = maxMana;
+        if (manaSlider != null)
+        {
+            manaSlider.maxValue = maxMana;
+            manaSlider.value = currentMana;
+        }
     }
-}
-void Update()
-{
-    manaText.text = "Mana: " + mana;
-    Spell()
-}
-void Spell()
-{
-    if (Keyboard.current.fKey.wasPressedThisFrame)
+    void Update()
     {
-        animator.SetBool("spell", true);
-        playermana -= 10;
+        if (currentMana < maxMana)
+        {
+            currentMana += manaRegenRate * Time.deltaTime;
+            currentMana = Mathf.clamp(currentMana, 0f, maxMana);
+            UpdateManaUI(;)
+        }
     }
-    else
+    public bool TrySpendMana(float amount)
     {
-        animator.SetBool("spell", false);
+        if (currentMana >= amount)
+        {
+            currentMana -= amount;
+            UpdateManaUI();
+            return true;
+        }
+        return false;
     }
-    if (playermana <= 0)
+    private void UpdateManaUI()
     {
-        MessageBox.Show("No Mana")
+        if (manaSlider != null)
+        {
+            manaSlider.value = currentMana
+        }
     }
 }
